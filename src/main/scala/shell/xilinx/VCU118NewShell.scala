@@ -20,8 +20,8 @@ class SysClockVCU118PlacedOverlay(val shell: VCU118ShellBasicOverlays, name: Str
   val node = shell { ClockSourceNode(freqMHz = 250, jitterPS = 50)(ValName(name)) }
 
   shell { InModuleBody {
-    shell.xdc.addPackagePin(io.p, "E12")
-    shell.xdc.addPackagePin(io.n, "D12")
+    shell.xdc.addPackagePin(io.p, "Y52")         //E12   zhuzl  20240808
+    shell.xdc.addPackagePin(io.n, "Y53")         //D12   zhuzl  20240808
     shell.xdc.addIOStandard(io.p, "DIFF_SSTL12")
     shell.xdc.addIOStandard(io.n, "DIFF_SSTL12")
   } }
@@ -52,12 +52,12 @@ class SDIOVCU118PlacedOverlay(val shell: VCU118ShellBasicOverlays, name: String,
   extends SDIOXilinxPlacedOverlay(name, designInput, shellInput)
 {
   shell { InModuleBody {
-    val packagePinsWithPackageIOs = Seq(("AV15", IOPin(io.spi_clk)),
-                                        ("AY15", IOPin(io.spi_cs)),
-                                        ("AW15", IOPin(io.spi_dat(0))),
-                                        ("AV16", IOPin(io.spi_dat(1))),
-                                        ("AU16", IOPin(io.spi_dat(2))),
-                                        ("AY14", IOPin(io.spi_dat(3))))
+    val packagePinsWithPackageIOs = Seq(("C50", IOPin(io.spi_clk)),          //AV15    zhuzl
+                                        ("E42", IOPin(io.spi_cs)),           //AY15    zhuzl
+                                        ("F41", IOPin(io.spi_dat(0))),       //AW15    zhuzl
+                                        ("B48", IOPin(io.spi_dat(1))),       //AV16    zhuzl
+                                        ("B47", IOPin(io.spi_dat(2))),       //AU16    zhuzl
+                                        ("F42", IOPin(io.spi_dat(3))))       //AY14    zhuzl
 
     packagePinsWithPackageIOs foreach { case (pin, io) => {
       shell.xdc.addPackagePin(io, pin)
@@ -106,10 +106,10 @@ class UARTVCU118PlacedOverlay(val shell: VCU118ShellBasicOverlays, name: String,
   extends UARTXilinxPlacedOverlay(name, designInput, shellInput, true)
 {
   shell { InModuleBody {
-    val packagePinsWithPackageIOs = Seq(("AY25", IOPin(io.ctsn.get)),
-                                        ("BB22", IOPin(io.rtsn.get)),
-                                        ("AW25", IOPin(io.rxd)),
-                                        ("BB21", IOPin(io.txd)))
+    val packagePinsWithPackageIOs = Seq(("D46", IOPin(io.ctsn.get)),    //AY25    zhuzl
+                                        ("D45", IOPin(io.rtsn.get)),   //BB22    zhuzl
+                                        ("C44", IOPin(io.rxd)),        //AW25    zhuzl
+                                        ("C45", IOPin(io.txd)))        //BB21    zhuzl
 
     packagePinsWithPackageIOs foreach { case (pin, io) => {
       shell.xdc.addPackagePin(io, pin)
@@ -334,18 +334,32 @@ class DDRVCU118PlacedOverlay(val shell: VCU118ShellBasicOverlays, name: String, 
     port.sys_rst := sys.reset // pllReset
     port.c0_ddr4_aresetn := !ar.reset
 
-    val allddrpins = Seq(  "D14", "B15", "B16", "C14", "C15", "A13", "A14",
-      "A15", "A16", "B12", "C12", "B13", "C13", "D15", "H14", "H15", "F15",
-      "H13", "G15", "G13", "N20", "E13", "E14", "F14", "A10", "F13", "C8",
-      "F11", "E11", "F10", "F9",  "H12", "G12", "E9",  "D9",  "R19", "P19",
-      "M18", "M17", "N19", "N18", "N17", "M16", "L16", "K16", "L18", "K18",
-      "J17", "H17", "H19", "H18", "F19", "F18", "E19", "E18", "G20", "F20",
-      "E17", "D16", "D17", "C17", "C19", "C18", "D20", "D19", "C20", "B20",
-      "N23", "M23", "R21", "P21", "R22", "P22", "T23", "R23", "K24", "J24",
-      "M21", "L21", "K21", "J21", "K22", "J22", "H23", "H22", "E23", "E22",
-      "F21", "E21", "F24", "F23", "D10", "P16", "J19", "E16", "A18", "M22",
-      "L20", "G23", "D11", "P17", "K19", "F16", "A19", "N22", "M20", "H24",
-      "G11", "R18", "K17", "G18", "B18", "P20", "L23", "G22")
+    //zhuzl   20240808
+    // val allddrpins = Seq(  "D14", "B15", "B16", "C14", "C15", "A13", "A14",
+    //   "A15", "A16", "B12", "C12", "B13", "C13", "D15", "H14", "H15", "F15",
+    //   "H13", "G15", "G13", "N20", "E13", "E14", "F14", "A10", "F13", "C8",
+    //   "F11", "E11", "F10", "F9",  "H12", "G12", "E9",  "D9",  "R19", "P19",
+    //   "M18", "M17", "N19", "N18", "N17", "M16", "L16", "K16", "L18", "K18",
+    //   "J17", "H17", "H19", "H18", "F19", "F18", "E19", "E18", "G20", "F20",
+    //   "E17", "D16", "D17", "C17", "C19", "C18", "D20", "D19", "C20", "B20",
+    //   "N23", "M23", "R21", "P21", "R22", "P22", "T23", "R23", "K24", "J24",
+    //   "M21", "L21", "K21", "J21", "K22", "J22", "H23", "H22", "E23", "E22",
+    //   "F21", "E21", "F24", "F23", "D10", "P16", "J19", "E16", "A18", "M22",
+    //   "L20", "G23", "D11", "P17", "K19", "F16", "A19", "N22", "M20", "H24",
+    //   "G11", "R18", "K17", "G18", "B18", "P20", "L23", "G22")
+
+      val allddrpins = Seq(  "AC55", "AC53", "AB57", "AB56", "AA56", "AC54", "AC51",    //ADR0-ADR6
+      "V53", "AC50", "W52", "AA54", "Y54", "W53", "V51", "AC56", "V55", "AB54",    //ADR7-ADR16
+      "W56", "W55", "V56", "AA57", "Y49", "W57", "AB52", "AB51", "V54", "AA55", "AA49",    //BG0-BG1  BA0-BA1   RESET_N   ACT_N   CK_C    CK_T    CKE    CS_N   ODT
+      "AA60", "AA59", "Y62", "Y63",  "AB59", "AB58", "AA61",  "AA62",  "W62", "V58",    //DQ0-9
+      "U62", "U61", "W63", "V63", "V59", "U63", "AF60", "AG61", "AE62", "AG58",    //DQ10-19
+      "AF61", "AF59", "AF62", "AG59", "AD62", "AC60", "AC58", "AD61", "AD63", "AC61",    //DQ20-29
+      "AC59", "AD60", "L57", "N58", "N55", "K57", "M58", "M57", "N56", "K58",    //DQ30-39
+      "P56", "T57", "R54", "R55", "T56", "R58", "P55", "R57", "P53", "U52",    //DQ40-49
+      "N51", "T51", "U53", "T52", "P52", "P51", "L52", "K54", "M51", "L51",    //DQ50-59
+      "L54", "J52", "M52", "J51", "Y60", "V61", "AG63", "AB63", "L56", "T55",    //DQ60-63   DQS0-DQS5
+      "N54", "K53", "Y59", "V60", "AG62", "AC63", "M56", "T54", "N53", "K52",    //DQS6-DQS7        DQT0-DQT7
+      "AB61", "W60", "AH58", "AE59", "P57", "U56", "R52", "M53")    //DM_DBI_N_0-DM_DBI_N_7
 
     (IOPin.of(io) zip allddrpins) foreach { case (io, pin) => shell.xdc.addPackagePin(io, pin) }
   } }

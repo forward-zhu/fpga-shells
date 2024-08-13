@@ -12,7 +12,9 @@ import org.chipsalliance.cde.config._
 class VCU118MIGIODDR(depth : BigInt) extends GenericParameterizedBundle(depth) {
   require((depth<=0x80000000L),"VCU118MIGIODDR supports upto 2GB depth configuraton")
   val c0_ddr4_adr           = Bits(OUTPUT,17)
-  val c0_ddr4_bg            = Bits(OUTPUT,1)
+  //modify ddr bg 1bit to 2 bit    zhuzl   20240808
+  // val c0_ddr4_bg            = Bits(OUTPUT,1)
+  val c0_ddr4_bg            = Bits(OUTPUT,2)
   val c0_ddr4_ba            = Bits(OUTPUT,2)
   val c0_ddr4_reset_n       = Bool(OUTPUT)
   val c0_ddr4_act_n         = Bool(OUTPUT)
@@ -93,9 +95,25 @@ class vcu118mig(depth : BigInt)(implicit val p:Parameters) extends BlackBox
     val c0_ddr4_s_axi_rvalid          = Bool(OUTPUT)
   }
 
+      // modify ddr     zhuzl     20200408
+      // CONFIG.C0.DDR4_MemoryPart                   {MT40A256M16GE-083E} 
+      // CONFIG.C0.DDR4_AxiAddressWidth              {31} 
+
   ElaborationArtefacts.add(
     "vcu118mig.vivado.tcl",
     """ 
+      set scriptPath [info script]
+      set scriptDir [file dirname $scriptPath]
+      set dirName [file tail $scriptDir]
+  	  set newFolderPath [file join $scriptDir "ip"]
+	    file mkdir $newFolderPath
+      puts "scriptPath name: $scriptPath"
+      puts "scriptDir name: $scriptDir"
+      puts "Directory name: $dirName" 
+  	  set currentDir [pwd]
+	    set ipdir [file join $currentDir $dirName $newFolderPath]
+	    puts "ipdir Path: $ipdir"
+
       create_ip -vendor xilinx.com -library ip -version 2.2 -name ddr4 -module_name vcu118mig -dir $ipdir -force
       set_property -dict [list \
       CONFIG.AL_SEL                               {0} \
@@ -107,7 +125,7 @@ class vcu118mig(depth : BigInt)(implicit val p:Parameters) extends BlackBox
       CONFIG.C0.ControllerType                    {DDR4_SDRAM} \
       CONFIG.C0.DDR4_AUTO_AP_COL_A3               {false} \
       CONFIG.C0.DDR4_AutoPrecharge                {false} \
-      CONFIG.C0.DDR4_AxiAddressWidth              {31} \
+      CONFIG.C0.DDR4_AxiAddressWidth              {33} \
       CONFIG.C0.DDR4_AxiArbitrationScheme         {RD_PRI_REG} \
       CONFIG.C0.DDR4_AxiDataWidth                 {64} \
       CONFIG.C0.DDR4_AxiIDWidth                   {4} \
@@ -130,7 +148,7 @@ class vcu118mig(depth : BigInt)(implicit val p:Parameters) extends BlackBox
       CONFIG.C0.DDR4_MCS_ECC                      {false} \
       CONFIG.C0.DDR4_Mem_Add_Map                  {ROW_COLUMN_BANK} \
       CONFIG.C0.DDR4_MemoryName                   {MainMemory} \
-      CONFIG.C0.DDR4_MemoryPart                   {MT40A256M16GE-083E} \
+      CONFIG.C0.DDR4_MemoryPart                   {MT40A1G16WBU-083E} \
       CONFIG.C0.DDR4_MemoryType                   {Components} \
       CONFIG.C0.DDR4_MemoryVoltage                {1.2V} \
       CONFIG.C0.DDR4_OnDieTermination             {RZQ/6} \

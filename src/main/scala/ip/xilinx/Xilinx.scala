@@ -183,7 +183,18 @@ class Series7MMCM(c : PLLParameters) extends BlackBox with PLLInstance {
   val aligned = if (c.input.feedback) " CONFIG.USE_PHASE_ALIGNMENT {true} \\\n" else ""
 
   ElaborationArtefacts.add(s"${moduleName}.vivado.tcl",
-    s"""create_ip -name clk_wiz -vendor xilinx.com -library ip -module_name \\
+    s"""set scriptPath [info script]
+      set scriptDir [file dirname $$scriptPath]
+      set dirName [file tail $$scriptDir]
+  	  set newFolderPath [file join $$scriptDir "ip"]
+	    file mkdir $$newFolderPath
+      puts "scriptPath name: $$scriptPath"
+      puts "scriptDir name: $$scriptDir"
+      puts "Directory name: $$dirName"
+  	  set currentDir [pwd]
+	    set ipdir [file join $$currentDir $$dirName $$newFolderPath]
+	    puts "ipdir Path: $$ipdir"
+    create_ip -name clk_wiz -vendor xilinx.com -library ip -module_name \\
        | ${moduleName} -dir $$ipdir -force
        |set_property -dict [list \\
        | CONFIG.CLK_IN1_BOARD_INTERFACE {Custom} \\
